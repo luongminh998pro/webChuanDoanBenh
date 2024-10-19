@@ -1,18 +1,18 @@
 from flask import Flask, request, render_template
 import pickle
+import gzip  # Thêm import gzip
 
 app = Flask(__name__)
 
-# Load mô hình đã huấn luyện và vectorizer từ file .pkl
-with open('model/model.pkl', 'rb') as model_file:
+# Load mô hình đã huấn luyện và vectorizer từ file nén .gz
+with gzip.open('model/model.pkl.gz', 'rb') as model_file:
     classifier = pickle.load(model_file)
 
-with open('model/tfidf_vectorizer.pkl', 'rb') as vectorizer_file:
+with gzip.open('model/tfidf_vectorizer.pkl.gz', 'rb') as vectorizer_file:
     tfidf_vectorizer = pickle.load(vectorizer_file)
 
-with open('model/label_encoder.pkl', 'rb') as le_file:
+with gzip.open('model/label_encoder.pkl.gz', 'rb') as le_file:
     label_encoder = pickle.load(le_file)
-
 
 # Hàm để xử lý dự đoán
 def du_doan_khoa_phong(quatrinh_benhly, kham_benh_toanthan, kham_benh_cac_bophan, ly_do_dieu_tri):

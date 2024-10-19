@@ -6,10 +6,10 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, accuracy_score
 import xgboost as xgb
 import pickle
+import gzip  # Thêm import gzip
 
 # Tải dữ liệu của bạn
 data = pd.read_csv("data/Du lieu KhamBenhT042024.csv")
-
 
 # Chọn các cột cần thiết cho bài toán
 text_columns = ['QUATRINHBENHLY', 'KHAMBENHTOANTHAN', 'KHAMBENHCACBOPHAN', 'LYDODIEUTRI']
@@ -65,10 +65,25 @@ print("Dự đoán tên khoa phòng:", y_pred_labels)
 with open('model/model.pkl', 'wb') as model_file:
     pickle.dump(classifier, model_file)
 
+# Nén model
+with open('model/model.pkl', 'rb') as f_in:
+    with gzip.open('model/model.pkl.gz', 'wb') as f_out:
+        f_out.writelines(f_in)
+
 # Lưu TF-IDF vectorizer
 with open('model/tfidf_vectorizer.pkl', 'wb') as vectorizer_file:
     pickle.dump(tfidf_vectorizer, vectorizer_file)
 
+# Nén TF-IDF vectorizer
+with open('model/tfidf_vectorizer.pkl', 'rb') as f_in:
+    with gzip.open('model/tfidf_vectorizer.pkl.gz', 'wb') as f_out:
+        f_out.writelines(f_in)
+
 # Lưu label encoder để giải mã nhãn số thành nhãn chuỗi
 with open('model/label_encoder.pkl', 'wb') as le_file:
     pickle.dump(label_encoder, le_file)
+
+# Nén label encoder
+with open('model/label_encoder.pkl', 'rb') as f_in:
+    with gzip.open('model/label_encoder.pkl.gz', 'wb') as f_out:
+        f_out.writelines(f_in)
