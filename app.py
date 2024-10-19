@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 # Huấn luyện mô hình và lưu các thành phần vào bộ nhớ
 def load_model():
-    data = pd.read_csv("data/Du lieu KhamBenhT042024.csv")
+    data = pd.read_csv("Du lieu KhamBenhT042024.csv")
     text_columns = ['QUATRINHBENHLY', 'KHAMBENHTOANTHAN', 'KHAMBENHCACBOPHAN', 'LYDODIEUTRI']
     data['van_ban_ket_hop'] = data[text_columns].fillna('').agg(' '.join, axis=1)
     data['van_ban_ket_hop'] = data['van_ban_ket_hop'].replace(r'^\s*$', None, regex=True)

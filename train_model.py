@@ -8,7 +8,7 @@ import xgboost as xgb
 
 def train_model():
     # Tải dữ liệu của bạn
-    data = pd.read_csv("data/Du lieu KhamBenhT042024.csv")
+    data = pd.read_csv("Du lieu KhamBenhT042024.csv")
 
     # Chọn các cột cần thiết cho bài toán
     text_columns = ['QUATRINHBENHLY', 'KHAMBENHTOANTHAN', 'KHAMBENHCACBOPHAN', 'LYDODIEUTRI']
