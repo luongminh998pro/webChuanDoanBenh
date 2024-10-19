@@ -6,6 +6,6 @@
     "routes": [
       { "src": "/(.*)", "dest": "app.py" }
     ],
-    "installCommand": "pip install --upgrade pip && pip install -r requirements.txt"
+    "installCommand": "pip install --upgrade pip setuptools && pip install -r requirements.txt"
   }
   
