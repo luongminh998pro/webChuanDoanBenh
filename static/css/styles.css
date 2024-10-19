@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif; 
+    background-color: #f4f4f4;
+    margin: 0; 
+    padding: 0; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+}
+
+.container {
+    background-color: white; 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); 
+    width: 100%;
+    max-width: 400px; 
+}
+
+h1 {
+    text-align: center; 
+}
+
+label {
+    font-weight: bold; 
+}
+
+.input-field {
+    width: 100%; 
+    height: 80px; 
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+    padding: 10px; 
+    box-sizing: border-box; 
+    resize: none; 
+}
+
+/* Chỉnh lại để hai nút có khoảng cách và đẹp mắt */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px; /* Khoảng cách giữa hai nút */
+}
+
+button {
+    width: 48%; /* Đặt chiều rộng cho nút để tạo cân đối */
+    padding: 10px; 
+    background-color: #4CAF50; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    text-align: center;
+}
+
+button:hover {
+    background-color: #45a049; 
+}
+
+h2 {
+    text-align: center;
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dự đoán Khoa Phòng</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+</head>
+<body>
+    <div class="container">
+        <h1>Dự đoán Tên Khoa Phòng</h1>
+
+        <form method="POST" id="predictionForm">
+            <label for="quatrinh_benhly">Quá trình bệnh lý:</label><br>
+            <textarea name="quatrinh_benhly" id="quatrinh_benhly" class="input-field" rows="3" required>{{ request.form.quatrinh_benhly if request.form.get('quatrinh_benhly') else '' }}</textarea><br><br>
+
+            <label for="kham_benh_toanthan">Khám bệnh toàn thân:</label><br>
+            <textarea name="kham_benh_toanthan" id="kham_benh_toanthan" class="input-field" rows="3" required>{{ request.form.kham_benh_toanthan if request.form.get('kham_benh_toanthan') else '' }}</textarea><br><br>
+
+            <label for="kham_benh_cac_bophan">Khám bệnh các bộ phận:</label><br>
+            <textarea name="kham_benh_cac_bophan" id="kham_benh_cac_bophan" class="input-field" rows="3" required>{{ request.form.kham_benh_cac_bophan if request.form.get('kham_benh_cac_bophan') else '' }}</textarea><br><br>
+
+            <label for="ly_do_dieu_tri">Lý do điều trị:</label><br>
+            <textarea name="ly_do_dieu_tri" id="ly_do_dieu_tri" class="input-field" rows="3" required>{{ request.form.ly_do_dieu_tri if request.form.get('ly_do_dieu_tri') else '' }}</textarea><br><br>
+
+            <!-- Đặt hai nút trong một container -->
+            <div class="button-container">
+                <button type="submit">Dự đoán</button>
+                <button type="button" onclick="resetForm()">Reset</button>
+            </div>
+        </form>
+
+        {% if prediction %}
+        <h2 id="predictionResult">Kết quả dự đoán: {{ prediction }}</h2>
+        {% endif %}
+    </div>
+
+    <script>
+        // Hàm để reset các trường textarea về trống và ẩn kết quả dự đoán
+        function resetForm() {
+            // Reset các textarea
+            document.getElementById("quatrinh_benhly").value = "";
+            document.getElementById("kham_benh_toanthan").value = "";
+            document.getElementById("kham_benh_cac_bophan").value = "";
+            document.getElementById("ly_do_dieu_tri").value = "";
+
+            // Reset hoặc ẩn kết quả dự đoán (nếu có)
+            var predictionResult = document.getElementById("predictionResult");
+            if (predictionResult) {
+                predictionResult.innerHTML = ""; // Xóa nội dung kết quả
+            }
+        }
+    </script>
+</body> 
+</html>
