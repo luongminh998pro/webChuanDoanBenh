@@ -1,9 +1,13 @@
 {
     "version": 2,
     "builds": [
-        {"src": "app.py", "use": "@vercel/python"}
+        { "src": "install.sh", "use": "@vercel/python" },
+        { "src": "app.py", "use": "@vercel/python" }
     ],
     "routes": [
-        {"src": "/(.*)", "dest": "app.py"}
-    ]
+        { "src": "/(.*)", "dest": "app.py" }
+    ],
+    "scripts": {
+        "postinstall": "bash install.sh"
+    }
 }
