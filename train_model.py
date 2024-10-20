@@ -1,19 +1,17 @@
-# model_trainer.py
-
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import classification_report, accuracy_score
-import xgboost as xgb
+from sklearn.ensemble import RandomForestClassifier  # Sử dụng RandomForestClassifier thay vì XGBoost
 
 class ModelTrainer:
     def __init__(self, data_path):
         self.data = pd.read_csv(data_path)
         self.label_encoder = LabelEncoder()
         self.vectorizer = TfidfVectorizer(max_features=1000)
-        self.classifier = xgb.XGBClassifier(n_estimators=100, random_state=42)
+        self.classifier = RandomForestClassifier(n_estimators=100, random_state=42)  # Thay đổi thành RandomForestClassifier
 
     def preprocess_data(self):
         # Chọn các cột cần thiết cho bài toán
@@ -39,7 +37,7 @@ class ModelTrainer:
         self.X_test_tfidf = self.vectorizer.transform(self.X_test)
 
     def train_model(self):
-        # Huấn luyện mô hình phân loại với XGBoost
+        # Huấn luyện mô hình phân loại với RandomForest
         self.classifier.fit(self.X_train_tfidf, self.y_train)
 
         # Dự đoán

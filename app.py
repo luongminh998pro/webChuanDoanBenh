@@ -1,8 +1,5 @@
-# app.py
-
 from flask import Flask, request, render_template
 from train_model import ModelTrainer
-
 
 app = Flask(__name__)
 
