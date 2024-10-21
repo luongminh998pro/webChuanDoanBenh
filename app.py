@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -915,31 +915,26 @@ khoa_phong = {
 
 }
 
-# Hàm so sánh để tìm khoa phòng phù hợp
+
 def match_department(QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI):
     scores = {k: 0 for k in khoa_phong.keys()}
-
-    # Tạo danh sách từ khóa cho từng trường nhập liệu
     input_data = [QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI]
 
-    # Duyệt qua từng khoa phòng và tính điểm số
     for department, keywords in khoa_phong.items():
         for keyword in keywords:
-            keyword = keyword.lower()  # Chuyển từ khóa về chữ thường
+            keyword = keyword.lower()
             for entry in input_data:
                 if keyword in entry.lower():
                     scores[department] += 1
 
-    # Tìm khoa phòng có điểm cao nhất
     max_score = max(scores.values())
     best_departments = [dept for dept, score in scores.items() if score == max_score]
 
-    # Trả về khoa phòng phù hợp hoặc thông báo không xác định
     return best_departments[0] if best_departments else 'Khoa phòng không xác định'
 
+# Route trang chính, cho phép cả GET và POST
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    prediction = ""
     if request.method == 'POST':
         QUATRINHBENHLY = request.form['quatrinh_benhly']
         KHAMBENHTOANTHAN = request.form['kham_benh_toanthan']
@@ -947,8 +942,30 @@ def index():
         LYDODIEUTRI = request.form['ly_do_dieu_tri']
         
         prediction = match_department(QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI)
-    
+
+        # Chuyển hướng để tránh gửi lại form khi tải lại trang
+        return redirect(url_for('result', prediction=prediction))
+
+    return render_template('index.html', prediction="")
+
+@app.route('/result')
+def result():
+    # Lấy dự đoán từ query string
+    prediction = request.args.get('prediction', '')
     return render_template('index.html', prediction=prediction)
+
+# Các route khác cho Data Set, XGBoost và About
+@app.route('/dataset')
+def dataset():
+    return render_template('dataset.html')
+
+@app.route('/xgboost')
+def xgboost():
+    return render_template('xgboost.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

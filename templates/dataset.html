@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Set</title>
+    <link rel="stylesheet" href="/static/css/styles.css"> 
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/dataset">Data Set</a></li>
+            <li><a href="/xgboost">XGBoost Alg</a></li>
+            <li><a href="/about">About Author</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <h1>Data Set</h1>
+        <table>
+            {% for row in data %}
+            <tr>
+                {% for col in row %}
+                <td>{{ col }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body> 
+</html>
