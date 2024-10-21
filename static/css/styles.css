@@ -9,6 +9,7 @@ body {
     justify-content: center; 
     align-items: center; 
     height: 100vh; 
+    padding-top: 60px; /* Đặt khoảng cách để phần nội dung không bị che bởi menu điều hướng */
 }
 
 /* Container chính cho phần dự đoán */
@@ -24,45 +25,31 @@ body {
 /* Định dạng cho các trường nhập liệu (textarea) */
 .input-field {
     width: 100%; 
-    height: 60px; /* Giảm chiều cao của textarea */
+    height: 60px; 
     border: 1px solid #ccc; 
     border-radius: 5px; 
-    padding: 8px; /* Giảm padding để tiết kiệm không gian */
+    padding: 8px; 
     box-sizing: border-box; 
     resize: none; 
     margin-bottom: 10px;
-    font-size: 14px; /* Giảm kích thước chữ cho trường nhập liệu */
+    font-size: 14px; 
 }
 
-/* Định dạng cho container của các nút */
-.button-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px; /* Giảm khoảng cách giữa hai nút */
-}
-
-/* Định dạng nút */
+/* Định dạng cho nút */
 button {
-    width: 48%; /* Đặt chiều rộng cho nút để tạo cân đối */
-    padding: 10px; /* Tăng kích thước nút */
+    width: 48%; 
+    padding: 12px; /* Đảm bảo chiều cao tối thiểu là 24px */
     background-color: #4CAF50; 
-    color: white; 
+    color: #ffffff; /* Màu chữ trắng */
     border: none; 
     border-radius: 5px; 
     cursor: pointer; 
     text-align: center;
-    font-size: 14px; /* Giảm kích thước chữ cho nút */
+    font-size: 16px; 
 }
 
 button:hover {
     background-color: #45a049; 
-}
-
-/* Định dạng kết quả dự đoán */
-h2 {
-    text-align: center;
-    font-size: 20px;
-    color: #333;
 }
 
 /* Định dạng cho menu điều hướng */
@@ -90,9 +77,9 @@ nav ul li {
 }
 
 nav ul li a {
-    color: white;
+    color: white; /* Giữ màu chữ trắng */
     text-decoration: none;
-    padding: 10px 15px; /* Thay đổi padding để tăng kích thước */
+    padding: 12px 20px; /* Đảm bảo tổng chiều cao tối thiểu là 24px */
     font-size: 16px;
 }
 
@@ -101,7 +88,9 @@ nav ul li a:hover {
     border-radius: 5px;
 }
 
-/* Đặt khoảng trống trên cùng để tránh chồng lên menu */
-body {
-    padding-top: 60px; /* Đặt khoảng cách để phần nội dung không bị che bởi menu điều hướng */
+/* Định dạng kết quả dự đoán */
+h2 {
+    text-align: center;
+    font-size: 20px;
+    color: #333;
 }
