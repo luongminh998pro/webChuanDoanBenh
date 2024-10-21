@@ -4,7 +4,7 @@ from train_model import ModelTrainer
 app = Flask(__name__)
 
 # Khởi tạo ModelTrainer
-trainer = ModelTrainer("data/Du lieu KhamBenhT042024.csv")
+trainer = ModelTrainer("data/Du_lieu_KhamBenhT042024.csv")
 trainer.preprocess_data()
 trainer.train_model()
 
