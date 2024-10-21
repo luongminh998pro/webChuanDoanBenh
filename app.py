@@ -1,4 +1,8 @@
 from flask import Flask, render_template, request
+import csv
+import re
+
+app = Flask(__name__)
 
 app = Flask(__name__)
 
@@ -931,7 +935,55 @@ def match_department(QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODI
 
     return best_departments[0] if best_departments else 'Khoa phòng không xác định'
 
-# Route trang chính, cho phép cả GET và POST
+# Hàm để làm sạch mức lương (được điều chỉnh cho phù hợp)
+def clean_data(data_str):
+    return data_str.strip() if data_str else "N/A"
+
+# Đọc dữ liệu từ file CSV
+def get_dataset():
+    dataset = []
+    with open('data/Du-lieu-KhamBenhT042024.csv', mode='r', encoding='utf-8-sig') as file:
+        csv_reader = csv.DictReader(file)
+        for row in csv_reader:
+            # Làm sạch và lấy dữ liệu từ các cột
+            age = clean_data(row.get('TUOI'))
+            gender = clean_data(row.get('TENPHAI'))
+            province = clean_data(row.get('TENTINHTHANH'))
+            district = clean_data(row.get('TENQUANHUYEN'))
+            date = clean_data(row.get('NGAYKHAM'))
+            insurance_type = clean_data(row.get('MADOITUONG'))
+            insurance_name = clean_data(row.get('TENDOITUONG'))
+            diagnosis_code = clean_data(row.get('MAICD'))
+            main_disease = clean_data(row.get('BENHCHINH'))
+            fee_name = clean_data(row.get('TENGIAVIENPHI'))
+            department_name = clean_data(row.get('TENKHOAPHONG'))
+            fee_type = clean_data(row.get('TENLOAIVIENPHI'))
+            medical_history = clean_data(row.get('QUATRINHBENHLY'))
+            general_examination = clean_data(row.get('KHAMBENHTOANTHAN'))
+            specific_examination = clean_data(row.get('KHAMBENHCACBOPHAN'))
+            treatment_reason = clean_data(row.get('LYDODIEUTRI'))
+
+            dataset.append({
+                'age': age,
+                'gender': gender,
+                'province': province,
+                'district': district,
+                'date': date,
+                'insurance_type': insurance_type,
+                'insurance_name': insurance_name,
+                'diagnosis_code': diagnosis_code,
+                'main_disease': main_disease,
+                'fee_name': fee_name,
+                'department_name': department_name,
+                'fee_type': fee_type,
+                'medical_history': medical_history,
+                'general_examination': general_examination,
+                'specific_examination': specific_examination,
+                'treatment_reason': treatment_reason
+            })
+    
+    return dataset
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     prediction = ""
@@ -945,11 +997,11 @@ def index():
     
     return render_template('index.html', prediction=prediction)
 
-# Các route khác cho Data Set, XGBoost và About
 @app.route('/dataset')
 def dataset():
-    # Hiển thị dữ liệu CSV
-    return render_template('dataset.html')
+    # Đọc dữ liệu từ tệp CSV
+    data = get_dataset()
+    return render_template('dataset.html', data=data)
 
 @app.route('/xgboost')
 def xgboost():
