@@ -1,59 +1,93 @@
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import LabelEncoder
-from flask import Flask, request, render_template
-import xgboost as xgb
+from flask import Flask, render_template, request
 
-# Tạo ứng dụng Flask
 app = Flask(__name__)
 
-# Huấn luyện mô hình và lưu các thành phần vào bộ nhớ
-def load_model():
-    data = pd.read_csv("data/Du_lieu_KhamBenhT042024.csv")
-    text_columns = ['QUATRINHBENHLY', 'KHAMBENHTOANTHAN', 'KHAMBENHCACBOPHAN', 'LYDODIEUTRI']
-    data['van_ban_ket_hop'] = data[text_columns].fillna('').agg(' '.join, axis=1)
-    data['van_ban_ket_hop'] = data['van_ban_ket_hop'].replace(r'^\s*$', None, regex=True)
-    data = data.dropna(subset=['van_ban_ket_hop', 'TENKHOAPHONG'])
+# Danh sách khoa phòng
+khoa_phong = {
+    'Pk Da Liễu': ['da', 'da liễu', 'ngứa', 'bong da', 'mẩn ngứa'],
+    'Pk Chấn Thương': ['chấn thương', 'xương', 'gãy', 'nẹp xương', 'cố định'],
+    'Pk Tai Mũi Họng': ['tai', 'mũi', 'họng', 'nghe', 'thính lực'],
+    'Pk Mắt': ['mắt', 'thị lực', 'thị giác'],
+    'Pk Cấp Cứu': ['cấp cứu', 'khẩn cấp'],
+    'Pk Răng Hàm Mặt': ['răng', 'hàm', 'mặt', 'nha khoa'],
+    'PK Nhi tại khoa': ['nhi', 'trẻ em'],
+    'Pk Nội I': ['nội', 'khám nội'],
+    'Pk Ung bướu yêu cầu': ['ung thư', 'u bướu'],
+    'Pk Nội Tiết-Đái Tháo Đường2': ['đái tháo đường', 'tiết nội'],
+    'Pk Tăng Huyết Áp_2': ['tăng huyết áp', 'huyết áp cao'],
+    'Pk Cơ Xương Khớp': ['cơ xương khớp', 'đau khớp'],
+    'Pk Tăng Huyết Áp 3 - Tim Mạch': ['tim mạch', 'tăng huyết áp'],
+    'Pk Y Học Cổ Truyền': ['y học cổ truyền'],
+    'Pk Nội Tiết-đái Tháo Đường': ['đái tháo đường', 'tiết nội'],
+    'Pk Quản lý Parkinson - Sa sút trí tuệ': ['parkinson', 'trí tuệ'],
+    'Pk Truyền Nhiễm': ['truyền nhiễm'],
+    'Pk Nội Thận - Tiết niệu và Lọc Máu': ['tiết niệu', 'lọc máu'],
+    'PK Ngoại Thần Kinh': ['thần kinh'],
+    'Pk Huyết Học Lâm Sàng': ['huyết học'],
+    'PK Nội tiết - YHHN': ['nội tiết'],
+    'Pk Phục Hồi Chức Năng': ['phục hồi', 'chức năng'],
+    'Pk Ngoại Tim mạch - Lồng ngực': ['tim mạch', 'ngoại khoa'],
+    'Pk Yêu cầu': ['yêu cầu'],
+    'pk.Ngoại Tiết niệu': ['tiết niệu'],
+    'Pk Y Học Hạt Nhân': ['hạt nhân'],
+    'Pk ung bướu': ['ung bướu'],
+    'Pk Tâm Thần': ['tâm thần'],
+    'Pk Lão khoa - Bảo Vệ Sức Khoẻ': ['lão khoa'],
+    'Pk Nhi': ['nhi'],
+    'Pk Phụ Sản': ['phụ sản'],
+    'Pk Thần Kinh': ['thần kinh'],
+    'Pk Ngoại': ['ngoại khoa'],
+    'Pk Sản': ['sản khoa'],
+    'Pk phụ sản dịch vụ': ['phụ sản', 'dịch vụ'],
+    'PK Sản Phụ Khoa Dịch Vụ Chất Lượng Cao': ['dịch vụ', 'phụ khoa'],
+    'Pk Ngoại Nhi': ['ngoại nhi'],
+    'Pk Trưởng Khoa': ['trưởng khoa'],
+    'PK Nội Tiết Dịch Vụ': ['dịch vụ', 'nội tiết'],
+    'Pk Yêu cầu CXK': ['yêu cầu'],
+    'PK TT Tạo Hình Thẩm Mỹ': ['tạo hình', 'thẩm mỹ'],
+    'PK Ưu tiên': ['ưu tiên'],
+    'Pk Nội Tim Mạch tại khoa': ['tim mạch'],
+    'Pk Phó khoa (P227)': ['phó khoa'],
+    'Pk Tư Vấn Tiêm Chủng': ['tiêm chủng'],
+    'Pk Nội Tiêu Hoá Dịch vụ': ['tiêu hóa', 'dịch vụ'],
+    'Pk Phó Khoa': ['phó khoa'],
+    'Pk Nội Tiết-Đái Tháo Đường3': ['đái tháo đường'],
+    'Pk Khám và Tư Vấn Dinh Dưỡng': ['dinh dưỡng']
+}
 
-    X = data['van_ban_ket_hop']
-    y = data['TENKHOAPHONG']
-    label_encoder = LabelEncoder()
-    y_encoded = label_encoder.fit_transform(y)
+# Hàm so sánh để tìm khoa phòng phù hợp
+def match_department(QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI):
+    scores = {k: 0 for k in khoa_phong.keys()}
 
-    X_train, _, y_train, _ = train_test_split(X, y_encoded, test_size=0.2, random_state=42)
+    # Tạo danh sách từ khóa cho từng trường nhập liệu
+    input_data = [QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI]
 
-    tfidf_vectorizer = TfidfVectorizer(max_features=1000)
-    X_train_tfidf = tfidf_vectorizer.fit_transform(X_train)
+    # Duyệt qua từng khoa phòng và tính điểm số
+    for department, keywords in khoa_phong.items():
+        for keyword in keywords:
+            for entry in input_data:
+                if keyword in entry.lower():
+                    scores[department] += 1
 
-    classifier = xgb.XGBClassifier(n_estimators=100, random_state=42)
-    classifier.fit(X_train_tfidf, y_train)
+    # Tìm khoa phòng có điểm cao nhất
+    max_score = max(scores.values())
+    best_departments = [dept for dept, score in scores.items() if score == max_score]
 
-    return classifier, tfidf_vectorizer, label_encoder
+    # Trả về khoa phòng phù hợp
+    return best_departments[0] if best_departments else 'Khoa phòng không xác định'
 
-# Tải mô hình vào bộ nhớ khi khởi động ứng dụng
-classifier, tfidf_vectorizer, label_encoder = load_model()
-
-# Hàm để xử lý dự đoán
-def du_doan_khoa_phong(quatrinh_benhly, kham_benh_toanthan, kham_benh_cac_bophan, ly_do_dieu_tri):
-    van_ban_moi = ' '.join([quatrinh_benhly, kham_benh_toanthan, kham_benh_cac_bophan, ly_do_dieu_tri])
-    van_ban_moi_tfidf = tfidf_vectorizer.transform([van_ban_moi])
-    du_doan = classifier.predict(van_ban_moi_tfidf)
-    khoa_phong_du_doan = label_encoder.inverse_transform(du_doan)
-    return khoa_phong_du_doan[0]
-
-# Route chính để hiển thị trang web
 @app.route('/', methods=['GET', 'POST'])
-def predict_khoa_phong():
+def index():
+    prediction = ""
     if request.method == 'POST':
-        quatrinh_benhly = request.form['quatrinh_benhly']
-        kham_benh_toanthan = request.form['kham_benh_toanthan']
-        kham_benh_cac_bophan = request.form['kham_benh_cac_bophan']
-        ly_do_dieu_tri = request.form['ly_do_dieu_tri']
-        khoa_phong_du_doan = du_doan_khoa_phong(quatrinh_benhly, kham_benh_toanthan, kham_benh_cac_bophan, ly_do_dieu_tri)
-        return render_template('index.html', prediction=khoa_phong_du_doan)
-    return render_template('index.html', prediction=None)
+        QUATRINHBENHLY = request.form['quatrinh_benhly']
+        KHAMBENHTOANTHAN = request.form['kham_benh_toanthan']
+        KHAMBENHCACBOPHAN = request.form['kham_benh_cac_bophan']
+        LYDODIEUTRI = request.form['ly_do_dieu_tri']
+        
+        prediction = match_department(QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI)
+    
+    return render_template('index.html', prediction=prediction)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
