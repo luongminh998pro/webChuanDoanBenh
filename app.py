@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -915,7 +915,6 @@ khoa_phong = {
 
 }
 
-
 def match_department(QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI):
     scores = {k: 0 for k in khoa_phong.keys()}
     input_data = [QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI]
@@ -935,6 +934,7 @@ def match_department(QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODI
 # Route trang chính, cho phép cả GET và POST
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    prediction = ""
     if request.method == 'POST':
         QUATRINHBENHLY = request.form['quatrinh_benhly']
         KHAMBENHTOANTHAN = request.form['kham_benh_toanthan']
@@ -942,29 +942,23 @@ def index():
         LYDODIEUTRI = request.form['ly_do_dieu_tri']
         
         prediction = match_department(QUATRINHBENHLY, KHAMBENHTOANTHAN, KHAMBENHCACBOPHAN, LYDODIEUTRI)
-
-        # Chuyển hướng để tránh gửi lại form khi tải lại trang
-        return redirect(url_for('result', prediction=prediction))
-
-    return render_template('index.html', prediction="")
-
-@app.route('/result')
-def result():
-    # Lấy dự đoán từ query string
-    prediction = request.args.get('prediction', '')
+    
     return render_template('index.html', prediction=prediction)
 
 # Các route khác cho Data Set, XGBoost và About
 @app.route('/dataset')
 def dataset():
+    # Hiển thị dữ liệu CSV
     return render_template('dataset.html')
 
 @app.route('/xgboost')
 def xgboost():
+    # Hiển thị giải thích thuật toán XGBoost
     return render_template('xgboost.html')
 
 @app.route('/about')
 def about():
+    # Hiển thị thông tin tác giả
     return render_template('about.html')
 
 if __name__ == '__main__':

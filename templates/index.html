@@ -5,6 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dự đoán Khoa Phòng</title>
     <link rel="stylesheet" href="/static/css/styles.css"> 
+    <style>
+        /* Định dạng cho các liên kết trong menu */
+        nav ul li a {
+            padding: 12px 20px; /* Tăng kích thước để đạt tối thiểu 24px */
+            color: #ffffff; /* Màu chữ trắng */
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        nav ul li a:hover {
+            background-color: #575757; /* Màu nền khi hover */
+            border-radius: 5px;
+        }
+
+        /* Định dạng nút */
+        button {
+            width: 48%; /* Đặt chiều rộng cho nút để tạo cân đối */
+            padding: 12px; /* Tăng kích thước nút */
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            text-align: center;
+            font-size: 16px; /* Tăng kích thước chữ cho nút */
+        }
+
+        button:hover {
+            background-color: #45a049; 
+        }
+    </style>
 </head>
 <body>
     <!-- Menu điều hướng -->
@@ -18,7 +49,7 @@
     </nav>
     
     <div class="container">
-        <h1>HỖ TRỢ PHÂN LOẠI KHÁM CHỮA BỆNH BAN ĐẦU </h1>
+        <h1>HỖ TRỢ PHÂN LOẠI KHÁM CHỮA BỆNH BAN ĐẦU</h1>
 
         <!-- Form nhập liệu -->
         <form method="POST" id="predictionForm">
